@@ -1,12 +1,16 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class CommandLineRunner {
     private static boolean keepRunning = true;
-    private static TaskController controller;
     static UserScanner scanner;
+    private static Map<String, Action> actionDictionary = new HashMap<>();
 
     public static void main(String[] args) {
-        controller = new TaskController();
+        actionDictionary.put("exit", new ExitAction());
+        actionDictionary.put("create", new CreateAction());
+        actionDictionary.put("update", new UpdateAction());
         scanner = UserScanner.getInstance();
         run();
     }
@@ -15,33 +19,15 @@ public class CommandLineRunner {
         String userInput;
         while (keepRunning) {
             System.out.print(
-                "Type exit to exit, create to create a new task or update to update an existing task\n");
+                    "Type exit to exit, create to create a new task or update to update an existing task\n");
             userInput = scanner.nextLineToLowerCase();
-            switch (userInput) {
-                case "exit":
-                    exit();
-                    break;
-                case "create":
-                    controller.setCreateMode(true);
-                    break;
-                case "update":
-                    controller.updateTask();
-                    break;
-
-                default:
-                    System.out.println("Please enter valid input");
-                    break;
-            }
-             while(controller.isCreateMode()) {
-                controller.createTask();
-            }
-
+            actionDictionary.get(userInput).execute();
         }
         scanner.getScanner().close();
     }
 
-    private static void exit() {
-        keepRunning = false;
+    public static void setKeepRunning(boolean keepRunning) {
+        CommandLineRunner.keepRunning = keepRunning;
     }
 
 }

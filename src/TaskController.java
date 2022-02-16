@@ -9,6 +9,7 @@ public class TaskController {
     private boolean createMode;
     private static UserScanner scanner;
     private boolean conversionSuccess;
+
     public TaskController() {
         scanner = UserScanner.getInstance();
     }
@@ -126,8 +127,10 @@ public class TaskController {
     }
 
     /**
-     * Need to consider what happens when moving to its previous state, so far just skipping the step
+     * Need to consider what happens when moving to its previous state, so far just
+     * skipping the step
      * If nothing done, then remove else ifs
+     * 
      * @param id
      */
     public void updateStatus(int id) {
@@ -150,9 +153,9 @@ public class TaskController {
                     updateStatusSuccess(id, Status.PROGRESS);
                 } else if (taskList.get(id).getStatus().equals(Status.WAITING)
                         || taskList.get(id).getStatus().equals(Status.DONE)) {
-                            updateStatusSuccess(id, Status.PROGRESS);   
+                    updateStatusSuccess(id, Status.PROGRESS);
                 }
-            break;
+                break;
             case "waiting":
                 if (taskList.get(id).getStatus().equals(Status.NEW)) {
                     while (taskList.get(id).getResponsible().equals("")) {
@@ -165,15 +168,15 @@ public class TaskController {
                     updateStatusSuccess(id, Status.WAITING);
                 } else if (taskList.get(id).getStatus().equals(Status.PROGRESS)
                         || taskList.get(id).getStatus().equals(Status.DONE)) {
-                            updateStatusSuccess(id, Status.WAITING);
+                    updateStatusSuccess(id, Status.WAITING);
                 }
                 break;
             case "done":
                 if (taskList.get(id).getStatus().equals(Status.NEW)) {
                     System.out.println("Can't move from New to Done");
                     // How to allow for entering a different status?
-                } else if(taskList.get(id).getStatus().equals(Status.PROGRESS)
-                || taskList.get(id).getStatus().equals(Status.DONE)){
+                } else if (taskList.get(id).getStatus().equals(Status.PROGRESS)
+                        || taskList.get(id).getStatus().equals(Status.DONE)) {
                     updateStatusSuccess(id, Status.DONE);
                 }
                 break;
@@ -185,13 +188,13 @@ public class TaskController {
     }
 
     private void updateStatusSuccess(int id, Status status) {
-        String comment="";
-        boolean emptyComment=true;
-        while(emptyComment) {
-           emptyComment=addComment(id, comment);
+        String comment = "";
+        boolean emptyComment = true;
+        while (emptyComment) {
+            emptyComment = addComment(id, comment);
         }
         taskList.get(id).setStatus(status);
-        System.out.println("Status was successfully changed to "+status);
+        System.out.println("Status was successfully changed to " + status);
     }
 
     public static boolean addComment(int id, String comment) {
