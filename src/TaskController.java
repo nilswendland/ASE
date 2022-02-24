@@ -3,37 +3,53 @@ import java.util.List;
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Map;
+import java.util.HashMap;
 
 public class TaskController {
-    private static List<Task> taskList = new ArrayList<>();
+    // private static List<Task> taskList = new ArrayList<>();
+    private static Map<String, Task> taskList = new HashMap<>();
     private boolean createMode;
     private static UserScanner scanner;
     private boolean conversionSuccess;
+    private int taskID;
+    private String taskTitle;
 
     public TaskController() {
         scanner = UserScanner.getInstance();
     }
 
     public void createTask() {
-        String title;
         System.out.println("You're creating a new task. Please enter title or type 'cancel' to get back to main menu");
-        title = scanner.nextLineToLowerCase();
-        while (findTask(title) < taskList.size()) {
+        taskTitle = scanner.nextLineToLowerCase();
+        /*
+         * kann while nicht durch try catch ersetzen, weil wenn Titel existiert wird
+         * keine Exception ausgelöst
+         */
+        /*
+         * while (findTask(taskTitle) < taskList.size()) {
+         * System.out.
+         * println("Task with this title already exists. Please choose a different title"
+         * );
+         * taskTitle = scanner.nextLineToLowerCase();
+         * }
+         */
+        while (taskList.get(taskTitle) != null) {
+
+            // task gefunden
             System.out.println("Task with this title already exists. Please choose a different title");
-            title = scanner.nextLineToLowerCase();
+            taskTitle = scanner.nextLineToLowerCase();
         }
-        if (title.equals("cancel")) {
-            createMode = false;
-            return;
-        }
+        // task existiert noch nicht
+
         System.out.println("Please enter a description for your task");
-        String description = scanner.nextLineToLowerCase();
-        if (description.equals("cancel")) {
+        String description = scanner.nextLine();
+        if (description.equalsIgnoreCase("cancel")) {
             createMode = false;
             return;
         }
-        Task newTask = new Task(title, description);
-        taskList.add(newTask);
+        Task newTask = new Task(taskTitle, description);
+        taskList.put(taskTitle, newTask);
         System.out.println("Your task " + newTask.getTitle() + " has been created successfully");
         System.out.println("Do you want to create another task? Y/N");
         if (!scanner.nextLineToLowerCase().equals("y")) {
@@ -43,18 +59,25 @@ public class TaskController {
 
     public void updateTask() {
         System.out.println("Which task would you like to update? Please enter the task title");
-        String taskTitle = scanner.nextLineToLowerCase();
-        int id = findTask(taskTitle);
-        while (id >= taskList.size()) {
-            System.out.println("The task does not exists. Please choose a valid task");
-            taskTitle = scanner.nextLineToLowerCase();
-            id = findTask(taskTitle);
+        taskTitle = scanner.nextLineToLowerCase();
+        try {
+            taskID = findTask(taskTitle);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            taskID = findTask(scanner.nextLineToLowerCase());
         }
-        updateTitle(taskTitle, id);
-        updateDescription(id);
-        updateResponsible(id);
-        updateDueDate(id);
-        updateStatus(id);
+        /*
+         * while (id >= taskList.size()) {
+         * System.out.println("The task does not exists. Please choose a valid task");
+         * taskTitle = scanner.nextLineToLowerCase();
+         * id = findTask(taskTitle);
+         * }
+         */
+        updateTitle(taskID);
+        updateDescription(taskID);
+        updateResponsible(taskID);
+        updateDueDate(taskID);
+        updateStatus(taskID);
 
     }
 
@@ -64,7 +87,7 @@ public class TaskController {
                 return i;
             }
         }
-        return taskList.size();
+        throw new IllegalArgumentException("Task does not exist! Please choose an existing task!");
     }
 
     public boolean edited(String text) {
@@ -74,17 +97,28 @@ public class TaskController {
             return true;
     }
 
-    public void updateTitle(String taskTitle, int id) {
+    public void updateTitle(int id) {
         System.out.println("If you want to edit the title, please enter new title. Press return to continue");
         taskTitle = scanner.nextLineToLowerCase();
-        while (findTask(taskTitle) < taskList.size()) {
-            System.out
-                    .print("The desired title is already used by a different task. \n Please enter a different title");
-            taskTitle = scanner.nextLineToLowerCase();
-        }
-        if (edited(taskTitle)) {
-            taskList.get(id).setTitle(taskTitle);
-            System.out.println("Title was successfully updated!!!");
+        /*
+         * while (findTask(taskTitle) < taskList.size()) {
+         * System.out
+         * .print("The desired title is already used by a different task. \n Please enter a different title"
+         * );
+         * taskTitle = scanner.nextLineToLowerCase();
+         * }
+         * if (edited(taskTitle)) {
+         * taskList.get(id).setTitle(taskTitle);
+         * System.out.println("Title was successfully updated!!!");
+         * }
+         */
+        try {
+            findTask(taskTitle);
+        } catch (IllegalArgumentException e) {
+            if (edited(taskTitle)) {
+                taskList.get(id).setTitle(taskTitle);
+                System.out.println("Title was successfully updated!!!");
+            }
         }
     }
 
@@ -207,11 +241,12 @@ public class TaskController {
 
     }
 
-    public static List<Task> getTaskList() {
+
+    public static Map<String, Task> getTaskList() {
         return taskList;
     }
 
-    public static void setTaskList(List<Task> taskList) {
+    public static void setTaskList(Map<String, Task> taskList) {
         TaskController.taskList = taskList;
     }
 

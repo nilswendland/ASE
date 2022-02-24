@@ -1,5 +1,7 @@
+
 import java.time.LocalDate;
 import java.util.List;
+
 
 public class Task {
 	private LocalDate dueDate;
@@ -10,6 +12,7 @@ public class Task {
 	private List<String> comments;
 
 	public Task(String name, String description) {
+	
 		this.title = name;
 		this.description = description;
 		status = Status.NEW;

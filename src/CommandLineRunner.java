@@ -1,6 +1,5 @@
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class CommandLineRunner {
     private static boolean keepRunning = true;

@@ -7,6 +7,7 @@ public class CreateAction extends Action {
         while (controller.isCreateMode()) {
             controller.createTask();
         }
+        
     }
 
 }
