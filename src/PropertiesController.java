@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
 public class PropertiesController {
     private static final String PROPERTIES_FILE_PATH = "src/properties/";
@@ -38,10 +40,24 @@ public class PropertiesController {
         String fileName = task.getTitle();
         Properties properties = new Properties();
         properties.setProperty("title", task.getTitle());
-        if(!task.getResponsible().equals(null)) properties.setProperty("responsible", task.getResponsible());
-        if(!task.getDueDate().equals(null)) properties.setProperty("dueDate", task.getDueDate().toString());
-        if(!task.getStatus().equals(null)) properties.setProperty("status", task.getStatus().toString());
+        properties.setProperty("description", task.getDescription());
+        properties.setProperty("responsible", task.getResponsible());
+        try {
+            properties.setProperty("dueDate", task.getDueDate().toString());   
+        } catch (Exception e) {
+            
+        }
+        properties.setProperty("status", task.getStatus().toString());
+
+        //stringarray in csv
+    //    String comments="";
+    //    for(int i=0;i<task.getComments().size();i++){
+    //        comments = comments + task.getComments().get(i)+ "/+";
+    //    }
+          String s = ""; String.join("/+", task.getComments());
+        properties.setProperty("comments", s);
         // ...
+        
         writeProperties(properties, fileName);
     }
 
@@ -54,7 +70,8 @@ public class PropertiesController {
             Task task = new Task(title, description);
             task.setDueDate(LocalDate.parse(properties.getProperty("dueDate", "2999-12-31")));
             task.setStatus(Status.valueOf(properties.getProperty("status", "NEW")));
-
+            String comments = properties.getProperty("comments", null);
+            task.setComments(Arrays.asList(comments.split("/+")));
             // ...
             return task;
         } catch (IOException e) {
