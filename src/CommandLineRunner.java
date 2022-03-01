@@ -10,6 +10,7 @@ public class CommandLineRunner {
         actionDictionary.put("exit", new ExitAction());
         actionDictionary.put("create", new CreateAction());
         actionDictionary.put("update", new UpdateAction());
+     //   actionDictionary.put("analyze", new AnalysisAction());
         scanner = UserScanner.getInstance();
         run();
     }

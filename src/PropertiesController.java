@@ -9,9 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.io.File;
+import java.util.Iterator;
 
 public class PropertiesController {
-    private static final String PROPERTIES_FILE_PATH = "src/main/resources/";
+    private static final String PROPERTIES_FILE_PATH = "src/properties/";
 
     private static PropertiesController instance = new PropertiesController();
     private Properties properties;
@@ -37,9 +38,9 @@ public class PropertiesController {
         String fileName = task.getTitle();
         Properties properties = new Properties();
         properties.setProperty("title", task.getTitle());
-        properties.setProperty("responsible", task.getResponsible());
-        properties.setProperty("dueDate", task.getDueDate().toString());
-        properties.setProperty("status", task.getStatus().toString());
+        if(!task.getResponsible().equals(null)) properties.setProperty("responsible", task.getResponsible());
+        if(!task.getDueDate().equals(null)) properties.setProperty("dueDate", task.getDueDate().toString());
+        if(!task.getStatus().equals(null)) properties.setProperty("status", task.getStatus().toString());
         // ...
         writeProperties(properties, fileName);
     }
@@ -47,11 +48,12 @@ public class PropertiesController {
     public Task readTask(String fileName) {
         Properties properties = new Properties();
         try (InputStream propertiesFiles = new FileInputStream(PROPERTIES_FILE_PATH + fileName)) {
-            String title = properties.getProperty("title");
-            String description = properties.getProperty("description");
+            properties.load(propertiesFiles);
+            String title = properties.getProperty("title", "noTitle");
+            String description = properties.getProperty("description", "no Description");
             Task task = new Task(title, description);
-            task.setDueDate(LocalDate.parse(properties.getProperty("dueDate")));
-            task.setStatus(Status.valueOf(properties.getProperty("status")));
+            task.setDueDate(LocalDate.parse(properties.getProperty("dueDate", "2999-12-31")));
+            task.setStatus(Status.valueOf(properties.getProperty("status", "NEW")));
 
             // ...
             return task;
@@ -74,7 +76,11 @@ public class PropertiesController {
     }
 
     public static void writeTasks() {
-        TaskController.getTaskList().forEach((title, task) -> writeTask(task));
+        Iterator<Task> iterator = TaskController.getTaskList().values().iterator();
+        while (iterator.hasNext()) {
+            Task task = iterator.next();
+            writeTask(task);
+        }
     }
 
     public static void writeProperties(Properties properties, String fileName) {

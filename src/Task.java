@@ -70,4 +70,7 @@ public class Task {
 		return comments.add(newComment);
 
 	}
+
+	public void setComments(List<String> comments2) {
+	}
 }

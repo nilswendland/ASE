@@ -2,9 +2,11 @@
 public abstract class Action {
     public abstract void execute();
 
-    public TaskController controller;
+    public static TaskController controller;
+    static UserScanner scanner;
 
     protected Action() {
-        controller = new TaskController();
+        controller = TaskController.getInstance();
+        scanner = UserScanner.getInstance();
     }
 }

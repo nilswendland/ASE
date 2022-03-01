@@ -3,7 +3,14 @@ public class UpdateAction extends Action {
 
     @Override
     public void execute() {
-        controller.updateTask();
+        System.out.println("Which task would you like to update? Please enter the task title");
+       String taskTitle = scanner.nextLineToLowerCase();
+        while (!TaskController.getTaskList().containsKey(taskTitle)) {
+            System.out.println("Task does not exist. Please choose existing task!");
+            taskTitle = scanner.nextLineToLowerCase();
+        }
+
+        controller.updateTask(TaskController.getTaskList().get(taskTitle));
 
     }
 

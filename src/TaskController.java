@@ -2,9 +2,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class TaskController {
     // private static List<Task> taskList = new ArrayList<>();
@@ -14,34 +16,50 @@ public class TaskController {
     private boolean conversionSuccess;
     private int taskID;
     private String taskTitle;
+    private PropertiesController propertiesController;
+    private static TaskController instance = new TaskController();
+    private boolean forceComment;
+    private boolean forceResponsible;
 
-    public TaskController() {
+    public boolean isForceComment() {
+        return forceComment;
+    }
+
+    public void setForceComment(boolean forceComment) {
+        this.forceComment = forceComment;
+    }
+
+    private TaskController() {
         scanner = UserScanner.getInstance();
+        propertiesController = PropertiesController.getInstance();
+        taskList = propertiesController.readTasks();
+        debugTaskList();
+    }
+
+    public static TaskController getInstance() {
+        return instance;
+    }
+
+    public void debugTaskList() {
+        Iterator<Task> iterator = taskList.values().iterator();
+        while (iterator.hasNext()) {
+            Task task = iterator.next();
+            System.out.println("title: " + task.getTitle());
+            System.out.println(" description: " + task.getDescription());
+            System.out.println(" responsible: " + task.getResponsible());
+            System.out.println(" status: " + task.getStatus());
+            System.out.println("dueDate: " + task.getDueDate());
+            System.out.println("comments: " + task.getComments());
+        }
     }
 
     public void createTask() {
         System.out.println("You're creating a new task. Please enter title or type 'cancel' to get back to main menu");
         taskTitle = scanner.nextLineToLowerCase();
-        /*
-         * kann while nicht durch try catch ersetzen, weil wenn Titel existiert wird
-         * keine Exception ausgelöst
-         */
-        /*
-         * while (findTask(taskTitle) < taskList.size()) {
-         * System.out.
-         * println("Task with this title already exists. Please choose a different title"
-         * );
-         * taskTitle = scanner.nextLineToLowerCase();
-         * }
-         */
         while (taskList.get(taskTitle) != null) {
-
-            // task gefunden
             System.out.println("Task with this title already exists. Please choose a different title");
             taskTitle = scanner.nextLineToLowerCase();
         }
-        // task existiert noch nicht
-
         System.out.println("Please enter a description for your task");
         String description = scanner.nextLine();
         if (description.equalsIgnoreCase("cancel")) {
@@ -57,37 +75,17 @@ public class TaskController {
         }
     }
 
-    public void updateTask() {
-        System.out.println("Which task would you like to update? Please enter the task title");
-        taskTitle = scanner.nextLineToLowerCase();
-        try {
-            taskID = findTask(taskTitle);
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            taskID = findTask(scanner.nextLineToLowerCase());
-        }
-        /*
-         * while (id >= taskList.size()) {
-         * System.out.println("The task does not exists. Please choose a valid task");
-         * taskTitle = scanner.nextLineToLowerCase();
-         * id = findTask(taskTitle);
-         * }
-         */
-        updateTitle(taskID);
-        updateDescription(taskID);
-        updateResponsible(taskID);
-        updateDueDate(taskID);
-        updateStatus(taskID);
+    public void updateTask(Task taskToUpdate) {
+        setForceComment(false);
+        Task newTask = new Task("", "");
+        newTask.setTitle(checkTitle(taskToUpdate.getTitle()));
+        newTask.setDescription(checkDescription(taskToUpdate.getDescription()));
+        newTask.setStatus(checkStatus(taskToUpdate.getStatus()));
+        newTask.setDueDate(checkDueDate(taskToUpdate.getDueDate()));
+        newTask.setResponsible(checkResponsible(taskToUpdate.getResponsible()));
+        newTask.setComments(checkComments(taskToUpdate.getComments()));
+        PropertiesController.writeTask(newTask);
 
-    }
-
-    public int findTask(String title) {
-        for (int i = 0; i < taskList.size(); i++) {
-            if (taskList.get(i).getTitle().equals(title)) {
-                return i;
-            }
-        }
-        throw new IllegalArgumentException("Task does not exist! Please choose an existing task!");
     }
 
     public boolean edited(String text) {
@@ -97,150 +95,118 @@ public class TaskController {
             return true;
     }
 
-    public void updateTitle(int id) {
+    public String checkTitle(String oldTaskTitle) {
         System.out.println("If you want to edit the title, please enter new title. Press return to continue");
         taskTitle = scanner.nextLineToLowerCase();
-        /*
-         * while (findTask(taskTitle) < taskList.size()) {
-         * System.out
-         * .print("The desired title is already used by a different task. \n Please enter a different title"
-         * );
-         * taskTitle = scanner.nextLineToLowerCase();
-         * }
-         * if (edited(taskTitle)) {
-         * taskList.get(id).setTitle(taskTitle);
-         * System.out.println("Title was successfully updated!!!");
-         * }
-         */
-        try {
-            findTask(taskTitle);
-        } catch (IllegalArgumentException e) {
-            if (edited(taskTitle)) {
-                taskList.get(id).setTitle(taskTitle);
-                System.out.println("Title was successfully updated!!!");
+        if (edited(taskTitle)) {
+            while (taskList.containsKey(taskTitle)) {
+                System.out.println("title already exists! Please enter new title");
+                taskTitle = scanner.nextLineToLowerCase();
             }
+            return taskTitle;
         }
+        return oldTaskTitle;
     }
 
-    public void updateDescription(int id) {
+    public String checkDescription(String oldDescription) {
         System.out.println("Enter a new decription to change it. Press return to continue");
-
         String description = scanner.nextLineToLowerCase();
-        if (edited(description)) {
-            taskList.get(id).setDescription(description);
-            System.out.println("Description was successfully updated!!!");
-        }
+        if (edited(description))
+            return description;
+        else
+            return oldDescription;
     }
 
-    public void updateResponsible(int id) {
-        System.out.println("Enter the name of the person responsible for the task");
-
+    public String checkResponsible(String oldResponsible) {
+        System.out.println("Enter the name of the person responsible for the task or press enter to skip");
         String responsible = scanner.nextLineToLowerCase();
-        if (edited(responsible)) {
-            taskList.get(id).setResponsible(responsible);
-            System.out.println("Responsible was successfully updated!!!");
-        }
+        if (edited(responsible))
+            return responsible;
+        else
+            return oldResponsible;
     }
 
-    public void updateDueDate(int id) {
+    public LocalDate checkDueDate(LocalDate oldDueDate) {
         LocalDate dueDate;
-        boolean dateIsValid = false;
         System.out.println("Please enter new due date YYYY-MM-DD or press return to continue!");
-        while (!dateIsValid) {
-            try {
-                dueDate = LocalDate.parse(scanner.nextLineToLowerCase());
-                dateIsValid = true;
-                taskList.get(id).setDueDate(dueDate);
-                System.out.println("Due Date was changed successfully");
-            } catch (DateTimeParseException e) {
-                System.out.println("Please enter a valid due date YYYY-MM-DD");
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage() + "Please enter a valid due date YYYY-MM-DD");
+
+        String userInput = scanner.nextLine();
+
+        if (edited(userInput)) {
+
+            while (!isValidDate(userInput)) {
+                System.out.println("Please enter a valid date YYYY-MM-DD");
+                userInput = scanner.nextLine();
             }
+            return LocalDate.parse(userInput);
         }
+        return oldDueDate;
+    }
+
+    public boolean isValidDate(String dateStr) {
+        try {
+            LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+        return true;
     }
 
     /**
-     * Need to consider what happens when moving to its previous state, so far just
-     * skipping the step
-     * If nothing done, then remove else ifs
+     * Need to handle default case and New to Done - allow for second run.
      * 
      * @param id
      */
-    public void updateStatus(int id) {
+    public Status checkStatus(Status oldStatus) {
+
+        if (oldStatus.equals(Status.NEW)) {
+            forceComment = true;
+            forceResponsible = true;
+        }
         System.out.println(
-                "The current status is " + taskList.get(id).getStatus()
-                        + ". Enter new status('New', 'Progress', 'Waiting', Done");
+                "The current status is " + oldStatus
+                        + ". Enter new status('Progress', 'Waiting', 'Done'");
         switch (scanner.nextLineToLowerCase()) {
-            case "new":
-                updateStatusSuccess(id, Status.NEW);
-                break;
-            case "Progress":
-                if (taskList.get(id).getStatus().equals(Status.NEW)) {
-                    while (taskList.get(id).getResponsible().equals("")) {
-                        updateResponsible(id);
-                    }
-                    // This must be adjusted to the solution for skipping due date entry.
-                    while (taskList.get(id).getDueDate().equals(null)) {
-                        updateDueDate(id);
-                    }
-                    updateStatusSuccess(id, Status.PROGRESS);
-                } else if (taskList.get(id).getStatus().equals(Status.WAITING)
-                        || taskList.get(id).getStatus().equals(Status.DONE)) {
-                    updateStatusSuccess(id, Status.PROGRESS);
+            case "progress":
+                if (oldStatus.equals(Status.WAITING)
+                        || oldStatus.equals(Status.DONE)) {
+                    forceComment = true;
                 }
-                break;
+                return Status.PROGRESS;
             case "waiting":
-                if (taskList.get(id).getStatus().equals(Status.NEW)) {
-                    while (taskList.get(id).getResponsible().equals("")) {
-                        updateResponsible(id);
-                    }
-                    // This must be adjusted to the solution for skipping due date entry.
-                    while (taskList.get(id).getDueDate().equals(null)) {
-                        updateDueDate(id);
-                    }
-                    updateStatusSuccess(id, Status.WAITING);
-                } else if (taskList.get(id).getStatus().equals(Status.PROGRESS)
-                        || taskList.get(id).getStatus().equals(Status.DONE)) {
-                    updateStatusSuccess(id, Status.WAITING);
+                if (oldStatus.equals(Status.PROGRESS)
+                        || oldStatus.equals(Status.DONE)) {
+                    forceComment = true;
                 }
-                break;
+                return Status.WAITING;
             case "done":
-                if (taskList.get(id).getStatus().equals(Status.NEW)) {
+                if (oldStatus.equals(Status.NEW)) {
                     System.out.println("Can't move from New to Done");
                     // How to allow for entering a different status?
-                } else if (taskList.get(id).getStatus().equals(Status.PROGRESS)
-                        || taskList.get(id).getStatus().equals(Status.DONE)) {
-                    updateStatusSuccess(id, Status.DONE);
+                } else if (oldStatus.equals(Status.PROGRESS)
+                        || oldStatus.equals(Status.WAITING)) {
+                    forceComment = true;
                 }
-                break;
+                return Status.DONE;
             default:
-                System.out.println("Please enter valid status");
-                break;
+                System.out.println("No Status change!");
+                return oldStatus;
         }
-
     }
 
-    private void updateStatusSuccess(int id, Status status) {
-        String comment = "";
-        boolean emptyComment = true;
-        while (emptyComment) {
-            emptyComment = addComment(id, comment);
+    public List<String> checkComments(List<String> oldComments) {
+        List<String> comments = new ArrayList<String>();
+        System.out.println("Please enter a new comment or press enter to skip");
+        String newComment = scanner.nextLine();
+
+        while (isForceComment() && !edited(newComment)) {
+            System.out.println("Comment is required! Please enter a new comment!");
+            newComment = scanner.nextLine();
         }
-        taskList.get(id).setStatus(status);
-        System.out.println("Status was successfully changed to " + status);
+        if (edited(newComment))
+            comments.add(newComment);
+        return comments;
     }
-
-    public static boolean addComment(int id, String comment) {
-        if (comment.equals("")) {
-            return true;
-        } else {
-            taskList.get(id).addComment(comment);
-            return false;
-        }
-
-    }
-
 
     public static Map<String, Task> getTaskList() {
         return taskList;
