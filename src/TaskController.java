@@ -13,13 +13,19 @@ public class TaskController {
     private static Map<String, Task> taskList = new HashMap<>();
     private boolean createMode;
     private static UserScanner scanner;
-    private boolean conversionSuccess;
-    private int taskID;
     private String taskTitle;
     private PropertiesController propertiesController;
     private static TaskController instance = new TaskController();
     private boolean forceComment;
     private boolean forceResponsible;
+
+    public boolean isForceResponsible() {
+        return forceResponsible;
+    }
+
+    public void setForceResponsible(boolean forceResponsible) {
+        this.forceResponsible = forceResponsible;
+    }
 
     public boolean isForceComment() {
         return forceComment;
@@ -84,15 +90,13 @@ public class TaskController {
         newTask.setDueDate(checkDueDate(taskToUpdate.getDueDate()));
         newTask.setResponsible(checkResponsible(taskToUpdate.getResponsible()));
         newTask.setComments(checkComments(taskToUpdate.getComments()));
+        System.out.println("Comments im Task" + newTask.getComments());
         PropertiesController.writeTask(newTask);
 
     }
 
     public boolean edited(String text) {
-        if (text.equals(""))
-            return false;
-        else
-            return true;
+        return (text.equals(""));
     }
 
     public String checkTitle(String oldTaskTitle) {
@@ -120,6 +124,13 @@ public class TaskController {
     public String checkResponsible(String oldResponsible) {
         System.out.println("Enter the name of the person responsible for the task or press enter to skip");
         String responsible = scanner.nextLineToLowerCase();
+        if (forceResponsible) {
+            while (!edited(responsible)) {
+                System.out.println("Responisble is required! Please enter responsible!");
+                responsible = scanner.nextLineToLowerCase();
+            }
+            return responsible;
+        }
         if (edited(responsible))
             return responsible;
         else
@@ -127,7 +138,6 @@ public class TaskController {
     }
 
     public LocalDate checkDueDate(LocalDate oldDueDate) {
-        LocalDate dueDate;
         System.out.println("Please enter new due date YYYY-MM-DD or press return to continue!");
 
         String userInput = scanner.nextLine();
@@ -140,7 +150,12 @@ public class TaskController {
             }
             return LocalDate.parse(userInput);
         }
-        return oldDueDate;
+        try {
+            return oldDueDate;
+        } catch (Exception e) {
+            return LocalDate.parse("2999-12-31");
+        }
+
     }
 
     public boolean isValidDate(String dateStr) {
@@ -194,17 +209,22 @@ public class TaskController {
         }
     }
 
-    public List<String> checkComments(List<String> oldComments) {
-        List<String> comments = new ArrayList<String>();
+    public List<String> checkComments(List<String> comments) {
         System.out.println("Please enter a new comment or press enter to skip");
         String newComment = scanner.nextLine();
-
+        System.out.println(newComment);
         while (isForceComment() && !edited(newComment)) {
             System.out.println("Comment is required! Please enter a new comment!");
             newComment = scanner.nextLine();
         }
-        if (edited(newComment))
-            comments.add(newComment);
+        if (edited(newComment)) {
+            try {
+                comments.add(newComment);
+            } catch (Exception e) {
+                System.out.println(newComment);
+                System.out.println("Fehler: " + e.getCause() + e.getMessage());
+            }
+        }
         return comments;
     }
 

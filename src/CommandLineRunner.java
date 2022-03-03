@@ -21,7 +21,12 @@ public class CommandLineRunner {
             System.out.print(
                     "Type exit to exit, create to create a new task or update to update an existing task\n");
             userInput = scanner.nextLineToLowerCase();
-            actionDictionary.get(userInput).execute();
+            try {
+                actionDictionary.get(userInput).execute(); 
+            } catch (NullPointerException e) {
+                System.out.println("Not a valid input");
+            }
+            
         }
         scanner.getScanner().close();
     }

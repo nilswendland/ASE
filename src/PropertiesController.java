@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.io.File;
 import java.util.Iterator;
-import java.util.List;
 
 public class PropertiesController {
     private static final String PROPERTIES_FILE_PATH = "src/properties/";
@@ -43,21 +42,22 @@ public class PropertiesController {
         properties.setProperty("description", task.getDescription());
         properties.setProperty("responsible", task.getResponsible());
         try {
-            properties.setProperty("dueDate", task.getDueDate().toString());   
+            properties.setProperty("dueDate", task.getDueDate().toString());
         } catch (Exception e) {
-            
+
         }
         properties.setProperty("status", task.getStatus().toString());
 
-        //stringarray in csv
-    //    String comments="";
-    //    for(int i=0;i<task.getComments().size();i++){
-    //        comments = comments + task.getComments().get(i)+ "/+";
-    //    }
-          String s = ""; String.join("/+", task.getComments());
-        properties.setProperty("comments", s);
+        // stringarray in csv
+        String comments = "";
+        for (int i = 0; i < task.getComments().size(); i++) {
+            comments = comments + task.getComment(i) + "/";
+            System.out.println(task.getComment(i));
+        }
+        // String s = String.join("/", task.getComments());
+        properties.setProperty("comments", comments);
         // ...
-        
+        System.out.println("comments=" + comments);
         writeProperties(properties, fileName);
     }
 
@@ -71,7 +71,7 @@ public class PropertiesController {
             task.setDueDate(LocalDate.parse(properties.getProperty("dueDate", "2999-12-31")));
             task.setStatus(Status.valueOf(properties.getProperty("status", "NEW")));
             String comments = properties.getProperty("comments", null);
-            task.setComments(Arrays.asList(comments.split("/+")));
+            task.setComments(Arrays.asList(comments.split("/")));
             // ...
             return task;
         } catch (IOException e) {
@@ -109,15 +109,4 @@ public class PropertiesController {
             }
         }
     }
-
-    // load properties file
-    /*
-     * public void loadPropertiesFile(String fileName) {
-     * try {
-     * properties.load(new FileInputStream(PROPERTIES_FILE_PATH + fileName));
-     * } catch (IOException e) {
-     * e.printStackTrace();
-     * }
-     * }
-     */
 }

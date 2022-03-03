@@ -69,12 +69,15 @@ public class Task {
 	public List<String> getComments() {
 		return comments;
 	}
-
+	public String getComment(int position) {
+		return comments.get(position);
+	}
 	public boolean addComment(String newComment) {
 		return comments.add(newComment);
 
 	}
 
 	public void setComments(List<String> comments2) {
+		this.comments=comments2;
 	}
 }
