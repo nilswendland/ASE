@@ -83,6 +83,7 @@ public class TaskController {
 
     public void updateTask(Task taskToUpdate) {
         setForceComment(false);
+        setForceResponsible(false);
         Task newTask = new Task("", "");
         newTask.setTitle(checkTitle(taskToUpdate.getTitle()));
         newTask.setDescription(checkDescription(taskToUpdate.getDescription()));
@@ -96,11 +97,11 @@ public class TaskController {
     }
 
     public boolean edited(String text) {
-        return (text.equals(""));
+        return (!text.equals(""));
     }
 
     public String checkTitle(String oldTaskTitle) {
-        System.out.println("If you want to edit the title, please enter new title. Press return to continue");
+        System.out.println("If you want to edit title, please enter new title. Press return to continue");
         taskTitle = scanner.nextLineToLowerCase();
         if (edited(taskTitle)) {
             while (taskList.containsKey(taskTitle)) {
@@ -124,7 +125,7 @@ public class TaskController {
     public String checkResponsible(String oldResponsible) {
         System.out.println("Enter the name of the person responsible for the task or press enter to skip");
         String responsible = scanner.nextLineToLowerCase();
-        if (forceResponsible) {
+        if (isForceResponsible()) {
             while (!edited(responsible)) {
                 System.out.println("Responisble is required! Please enter responsible!");
                 responsible = scanner.nextLineToLowerCase();
@@ -140,22 +141,22 @@ public class TaskController {
     public LocalDate checkDueDate(LocalDate oldDueDate) {
         System.out.println("Please enter new due date YYYY-MM-DD or press return to continue!");
 
-        String userInput = scanner.nextLine();
+        String newDate = scanner.nextLine();
 
-        if (edited(userInput)) {
+        if (edited(newDate)) {
 
-            while (!isValidDate(userInput)) {
+            while (!isValidDate(newDate)) {
                 System.out.println("Please enter a valid date YYYY-MM-DD");
-                userInput = scanner.nextLine();
+                newDate = scanner.nextLine();
             }
-            return LocalDate.parse(userInput);
+            return LocalDate.parse(newDate);
+        } else {
+            try {
+                return oldDueDate;
+            } catch (Exception e) {
+                return LocalDate.parse("2999-12-31");
+            }
         }
-        try {
-            return oldDueDate;
-        } catch (Exception e) {
-            return LocalDate.parse("2999-12-31");
-        }
-
     }
 
     public boolean isValidDate(String dateStr) {
@@ -205,6 +206,8 @@ public class TaskController {
                 return Status.DONE;
             default:
                 System.out.println("No Status change!");
+                forceComment = false;
+                forceResponsible = false;
                 return oldStatus;
         }
     }
@@ -218,6 +221,9 @@ public class TaskController {
             newComment = scanner.nextLine();
         }
         if (edited(newComment)) {
+    /**
+     * This try catch can be omitted once comments.add doesn't throw Exception anymore
+     *  */ 
             try {
                 comments.add(newComment);
             } catch (Exception e) {
