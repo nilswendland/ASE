@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,12 +50,12 @@ public class PropertiesController {
         properties.setProperty("status", task.getStatus().toString());
 
         // stringarray in csv
-        String comments = "";
-        for (int i = 0; i < task.getComments().size(); i++) {
-            comments = comments + task.getComment(i) + "/";
-            System.out.println(task.getComment(i));
-        }
-        // String s = String.join("/", task.getComments());
+        // String comments = "";
+        // for (int i = 0; i < task.getComments().size(); i++) {
+        //     comments = comments + task.getComment(i) + "/";
+        //     System.out.println(task.getComment(i));
+        // }
+        String comments = String.join("/", task.getComments());
         properties.setProperty("comments", comments);
         // ...
         System.out.println("comments=" + comments);
@@ -71,7 +72,7 @@ public class PropertiesController {
             task.setDueDate(LocalDate.parse(properties.getProperty("dueDate", "2999-12-31")));
             task.setStatus(Status.valueOf(properties.getProperty("status", "NEW")));
             String comments = properties.getProperty("comments", null);
-            task.setComments(Arrays.asList(comments.split("/")));
+            task.setComments(new ArrayList<>(Arrays.asList(comments.split("/"))));
             // ...
             return task;
         } catch (IOException e) {

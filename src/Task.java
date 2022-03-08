@@ -28,9 +28,9 @@ public class Task {
 
 	public void setDueDate(LocalDate dueDate) {
 
-		if (dueDate.isBefore(LocalDate.now())) {
-			throw new IllegalArgumentException("Due Date must be in the future!");
-		}
+		// if (dueDate.isBefore(LocalDate.now())) {
+		// 	throw new IllegalArgumentException("Due Date must be in the future!");
+		// }
 		this.dueDate = dueDate;
 	}
 
