@@ -71,6 +71,7 @@ public class PropertiesController {
             Task task = new Task(title, description);
             task.setDueDate(LocalDate.parse(properties.getProperty("dueDate", "2999-12-31")));
             task.setStatus(Status.valueOf(properties.getProperty("status", "NEW")));
+            task.setResponsible(properties.getProperty("responsible", ""));
             String comments = properties.getProperty("comments", null);
             task.setComments(new ArrayList<>(Arrays.asList(comments.split("/"))));
             // ...

@@ -1,4 +1,3 @@
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,5 +16,7 @@ public class AnalysisAction extends Action{
 
   protected AnalysisAction() {
     analysisActionDictionary.put("overdue", new OverdueAnalysisAction());
+    analysisActionDictionary.put("responsible", new ResponsibleAnalysisAction());
+    analysisActionDictionary.put("status", new StatusAnalysisAction());
 }
 }

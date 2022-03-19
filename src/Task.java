@@ -63,7 +63,7 @@ public class Task {
 	}
 
 	public void setResponsible(String responsible) {
-		this.responsible = responsible;
+		if (!responsible.equals("")) this.responsible = responsible;
 	}
 
 	public List<String> getComments() {
@@ -80,4 +80,9 @@ public class Task {
 	public void setComments(List<String> comments2) {
 		this.comments=comments2;
 	}
+
+	public String toString() {
+   return "title: "+this.title+"\n responsible: "+this.responsible+"\n description: "+this.description+"\n duedate: "+this.dueDate+"\n comments: "+this.comments.toString();
+ }
+
 }
