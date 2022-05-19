@@ -39,7 +39,7 @@ public class TaskController {
         this.forceComment = forceComment;
     }
 
-    private TaskController() {
+    TaskController() {
         scanner = UserScanner.getInstance();
         propertiesController = PropertiesController.getInstance();
         taskList = propertiesController.readTasks();
@@ -172,11 +172,7 @@ public class TaskController {
         return true;
     }
 
-    /**
-     * Need to handle default case and New to Done - allow for second run.
-     * 
-     * @param id
-     */
+
     public Status checkStatus(Status oldStatus) {
 
         if (oldStatus.equals(Status.NEW)) {
