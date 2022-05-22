@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import de.pickert.domain.Status;
 import de.pickert.domain.Task;
@@ -43,24 +42,10 @@ public class TaskController {
         scanner = UserScanner.getInstance();
         propertiesController = PropertiesController.getInstance();
         taskList = propertiesController.readTasks();
-        debugTaskList();
     }
 
     public static TaskController getInstance() {
         return instance;
-    }
-
-    public void debugTaskList() {
-        Iterator<Task> iterator = taskList.values().iterator();
-        while (iterator.hasNext()) {
-            Task task = iterator.next();
-            System.out.println("title: " + task.getTitle());
-            System.out.println(" description: " + task.getDescription());
-            System.out.println(" responsible: " + task.getResponsible());
-            System.out.println(" status: " + task.getStatus());
-            System.out.println("dueDate: " + task.getDueDate());
-            System.out.println("comments: " + task.getComments());
-        }
     }
 
     public void createTask() {
