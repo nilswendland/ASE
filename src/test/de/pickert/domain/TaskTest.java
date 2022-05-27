@@ -15,9 +15,14 @@ class TaskTest {
     }
 
     @Test
-    void setStatusShouldSetNewStatus() {
+    void setStatusShouldSetStatusNEW() {
         task.setStatus(Status.NEW);
         assertEquals("NEW",task.getStatus().toString());
+    }
+    @Test
+    void setStatusShouldSetStatusPROGRESS() {
+        task.setStatus(Status.PROGRESS);
+        assertEquals("PROGRESS",task.getStatus().toString());
     }
 
     @Test
@@ -25,5 +30,6 @@ class TaskTest {
         task.setResponsible("NewResponsible");
         assertEquals("NewResponsible", task.getResponsible());
     }
+
 
 }
