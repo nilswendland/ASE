@@ -26,7 +26,11 @@ class TaskTest {
         task.setStatus(Status.PROGRESS);
         assertEquals("PROGRESS",task.getStatus().toString());
     }
-
+    @Test
+    void setStatusShouldSetStatusDONE() {
+        task.setStatus(Status.DONE);
+        assertEquals("DONE",task.getStatus().toString());
+    }
     @Test
     void setResponsibleShouldSetResponsible() {
         task.setResponsible("NewResponsible");
