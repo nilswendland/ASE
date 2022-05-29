@@ -1,9 +1,11 @@
 package de.pickert.domain;
 
 import de.pickert.service.TaskController;
-import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.*;
+
 
 class TaskTest {
     Task task = new Task("testTitle","testDescription");

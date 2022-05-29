@@ -1,8 +1,16 @@
 package de.pickert.service;
 
-import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import org.hamcrest.CoreMatchers;
+import org.junit.After;
+import org.junit.Before;
+
+
 
 class TaskControllerTest {
     TaskController taskController = new TaskController();
@@ -26,5 +34,10 @@ class TaskControllerTest {
         assertFalse(taskController.isValidDate("2023/12/12"));
     }
 
+    @Test
+    void isForceResponsibleReturnsTrueWhenForceResponsibleTrue() {
+        taskController.setForceResponsible(true);
+        assertTrue(taskController.isForceResponsible());
+    }
 
 }
