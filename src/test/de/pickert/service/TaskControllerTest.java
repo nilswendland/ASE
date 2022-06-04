@@ -24,6 +24,10 @@ class TaskControllerTest {
     @Test
     void isValidDateReturnFalseWhenDateFormatIsInvalid() {
         assertFalse(taskController.isValidDate("2023/12/12"));
+        assertFalse(taskController.isValidDate("12-22-2000"));
+        assertFalse(taskController.isValidDate("22-12-2000"));
+        assertFalse(taskController.isValidDate("2022-22-12"));
+        assertFalse(taskController.isValidDate("14.12.2022"));
     }
 
 

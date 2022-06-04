@@ -1,0 +1,221 @@
+@startuml
+
+/' diagram meta data start
+config=CallConfiguration;
+{
+  "rootMethod": "de.pickert.service.PropertiesController#writeTask(Task)",
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": ""
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": true,
+    "cutInterfaceStructures": true,
+    "cutDataStructures": true,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 3,
+    "backwardDepth": 3,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false // root node is included
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showMethodParametersTypes": false,
+    "showMethodParametersNames": false,
+    "showMethodReturnType": false,
+    "showPackageLevels": 2,
+    "showCallOrder": false,
+    "edgeMode": "MethodsOnly", // TypesOnly, MethodsOnly, TypesAndMethods, MethodsAndDirectTypeUsage
+    "showDetailedClassStructure": false
+  },
+  "rootClass": "de.pickert.service.PropertiesController"
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="LR"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_578025050 { 
+   	label=pickert
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_1049418349 { 
+   	label=service
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   subgraph cluster_1550665859 { 
+   	label=PropertiesController
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   PropertiesController1656988416XXXwriteProperties1611387128[
+	label="+ writeProperties()"
+	style=filled
+	fillcolor=white
+	tooltip="PropertiesController
+
+null"
+	fontcolor=darkgreen
+];
+
+PropertiesController1656988416XXXwriteTask2599333[
+	label="+ writeTask()"
+	style=filled
+	fillcolor=white
+	tooltip="PropertiesController
+
+null"
+	penwidth=4
+	fontcolor=darkgreen
+];
+
+PropertiesController1656988416XXXwriteTasks0[
+	label="+ writeTasks()"
+	style=filled
+	fillcolor=white
+	tooltip="PropertiesController
+
+null"
+	fontcolor=darkgreen
+];
+} 
+
+subgraph cluster_774829007 { 
+   	label=TaskController
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   TaskController1656988416XXXupdateTask2599333[
+	label="+ updateTask()"
+	style=filled
+	fillcolor=white
+	tooltip="TaskController
+
+null"
+	fontcolor=darkgreen
+];
+} 
+} 
+
+subgraph cluster_2049086964 { 
+   	label=domain
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   subgraph cluster_177056870 { 
+   	label=ExitAction
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   ExitAction1805906728XXXexecute0[
+	label="+ execute()"
+	style=filled
+	fillcolor=white
+	tooltip="ExitAction
+
+null"
+	fontcolor=darkgreen
+];
+} 
+
+subgraph cluster_1966256437 { 
+   	label=Action
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   Action741458713XXXexecute0[
+	label="+ execute()"
+	style=filled
+	fillcolor=white
+	tooltip="Action
+
+null"
+	fontcolor=darkgreen
+];
+} 
+
+subgraph cluster_871110021 { 
+   	label=UpdateAction
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   UpdateAction1805906728XXXexecute0[
+	label="+ execute()"
+	style=filled
+	fillcolor=white
+	tooltip="UpdateAction
+
+null"
+	fontcolor=darkgreen
+];
+} 
+} 
+} 
+
+'edges    
+Action741458713XXXexecute0 -> ExitAction1805906728XXXexecute0;
+Action741458713XXXexecute0 -> UpdateAction1805906728XXXexecute0;
+ExitAction1805906728XXXexecute0 -> PropertiesController1656988416XXXwriteTasks0;
+PropertiesController1656988416XXXwriteTask2599333 -> PropertiesController1656988416XXXwriteProperties1611387128;
+PropertiesController1656988416XXXwriteTasks0 -> PropertiesController1656988416XXXwriteTask2599333;
+TaskController1656988416XXXupdateTask2599333 -> PropertiesController1656988416XXXwriteTask2599333;
+UpdateAction1805906728XXXexecute0 -> TaskController1656988416XXXupdateTask2599333;
+    
+}
+@enduml

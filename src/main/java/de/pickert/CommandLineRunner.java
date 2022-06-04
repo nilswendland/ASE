@@ -27,7 +27,7 @@ public class CommandLineRunner {
         String userInput;
         while (keepRunning) {
             System.out.print(
-                    "Type exit to exit, create to create a new task or update to update an existing task\n");
+                    "Type exit to exit,\n create to create a new task,\n update to update an existing task\n or analyze to get info\n");
             userInput = scanner.nextLineToLowerCase();
             try {
                 actionDictionary.get(userInput).execute(); 
