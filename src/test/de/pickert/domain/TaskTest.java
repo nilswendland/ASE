@@ -1,9 +1,11 @@
 package de.pickert.domain;
 
 import de.pickert.service.TaskController;
-import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.*;
+
 
 class TaskTest {
     Task task = new Task("testTitle","testDescription");
@@ -24,7 +26,11 @@ class TaskTest {
         task.setStatus(Status.PROGRESS);
         assertEquals("PROGRESS",task.getStatus().toString());
     }
-
+    @Test
+    void setStatusShouldSetStatusDONE() {
+        task.setStatus(Status.DONE);
+        assertEquals("DONE",task.getStatus().toString());
+    }
     @Test
     void setResponsibleShouldSetResponsible() {
         task.setResponsible("NewResponsible");
